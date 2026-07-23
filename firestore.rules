@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // username -> userId mapping. Public read (needed to resolve /username routes
+    // and to check availability). Only the owning user can create/delete their claim,
+    // and only if it doesn't already exist / matches their own record.
+    match /usernames/{username} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // usernames are immutable in v1
+    }
+
+    match /users/{userId} {
+      allow read: if true; // public profile page needs read access
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId
+                    // prevent a user from changing their own username or userId here
+                    && request.resource.data.username == resource.data.username
+                    && request.resource.data.userId == resource.data.userId;
+      allow delete: if false;
+
+      match /links/{linkId} {
+        allow read: if true;
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    match /themes/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
