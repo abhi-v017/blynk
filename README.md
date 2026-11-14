@@ -6,7 +6,7 @@ A clean, responsive link-in-bio web application built with **Next.js 16**, **Rea
 
 ### 🚀 Live Demo & Recruiter Test Account
 
-- **Live Application:** [https://blynk-11e7c.web.app](https://blynk-11e7c.web.app) *(or your live Vercel link)*
+- **Live Application:** [https://blynk-omega.vercel.app/](https://blynk-omega.vercel.app/) *(or your live Vercel link)*
 - **Sample Bio Page:** `/demo`
 - **Recruiter Demo Credentials:**
   - **Email:** `demo@blynk.app`
