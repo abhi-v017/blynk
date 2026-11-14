@@ -3,6 +3,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } f
 import {
   getFirestore,
   doc,
+  getDoc,
   setDoc,
   collection,
 } from "firebase/firestore";
@@ -51,9 +52,14 @@ async function seed() {
 
   const userId = user.uid;
 
-  // 1. Claim username
-  console.log(`Claiming username /${DEMO_USERNAME}...`);
-  await setDoc(doc(db, "usernames", DEMO_USERNAME), { userId });
+  // 1. Claim username (if not already claimed)
+  const unameDoc = await getDoc(doc(db, "usernames", DEMO_USERNAME));
+  if (!unameDoc.exists()) {
+    console.log(`Claiming username /${DEMO_USERNAME}...`);
+    await setDoc(doc(db, "usernames", DEMO_USERNAME), { userId });
+  } else {
+    console.log(`Username /${DEMO_USERNAME} already claimed.`);
+  }
 
   // 2. Set user profile
   console.log("Creating user profile document...");
@@ -74,22 +80,31 @@ async function seed() {
     presetId: "sage-minimal",
     background: {
       type: "color",
-      color: "#f4f6f4",
-      overlay: 0,
-    },
-    button: {
-      fill: "solid",
-      color: "#2d3a34",
-      textColor: "#ffffff",
-      shape: "rounded",
-      shadow: "none",
+      color: "#EAEFE9",
+      color2: "#DDE5DC",
+      gradientAngle: 180,
+      imageUrl: "",
+      overlay: 0.2,
     },
     font: {
-      family: "Inter",
-      color: "#1c2420",
+      family: "Space Grotesk",
+      bodyFamily: "Inter",
+      color: "#1F2922",
+      mutedColor: "#5A6B5F",
+      size: "md",
     },
+    button: {
+      shape: "soft",
+      fill: "solid",
+      bgColor: "#1F2922",
+      textColor: "#EAEFE9",
+      borderColor: "#1F2922",
+      spacing: "normal",
+      iconStyle: "auto",
+    },
+    layout: "stack",
+    animation: "fade",
     avatarShape: "circle",
-    animation: "none",
   });
 
   // 4. Create sample links

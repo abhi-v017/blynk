@@ -67,24 +67,27 @@ export function ColorInput({
   onChange,
   showSwatches = true,
 }: {
-  value: string;
+  value?: string;
   onChange: (v: string) => void;
   showSwatches?: boolean;
 }) {
+  const safeValue = typeof value === "string" ? value : "";
+  const hexValue = safeValue.startsWith("#") ? safeValue : "#EAEFE9";
+
   return (
     <div className="space-y-2.5">
       <div className="flex items-center gap-2 bg-surface border border-border rounded-lg px-2.5 py-1.5 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent/20 transition-all">
         <div className="relative w-7 h-7 sm:w-6 sm:h-6 rounded-md overflow-hidden border border-border/80 shrink-0">
           <input
             type="color"
-            value={value.startsWith("#") ? value : "#EAEFE9"}
+            value={hexValue}
             onChange={(e) => onChange(e.target.value)}
             className="absolute inset-[-50%] w-[200%] h-[200%] cursor-pointer border-none p-0 m-0"
           />
         </div>
         <input
           type="text"
-          value={value}
+          value={safeValue}
           onChange={(e) => onChange(e.target.value)}
           placeholder="#EAEFE9"
           className="flex-1 bg-transparent text-base sm:text-sm font-mono outline-none text-text"
@@ -102,7 +105,7 @@ export function ColorInput({
               type="button"
               onClick={() => onChange(c)}
               className={`w-6 h-6 sm:w-5 sm:h-5 rounded-full border transition-transform hover:scale-115 active:scale-95 ${
-                value.toLowerCase() === c.toLowerCase()
+                safeValue.toLowerCase() === c.toLowerCase()
                   ? "border-accent ring-2 ring-accent/30 scale-110"
                   : "border-border/80"
               }`}

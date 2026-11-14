@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { UserProfile, LinkItem, ThemeConfig } from "./types";
-import { DEFAULT_THEME } from "./presets";
+import { DEFAULT_THEME, normalizeTheme } from "./presets";
 
 const usernameRef = (username: string) => doc(db, "usernames", username.toLowerCase());
 const userRef = (userId: string) => doc(db, "users", userId);
@@ -72,7 +72,8 @@ export async function updateUserProfile(userId: string, data: Partial<UserProfil
 
 export async function getTheme(userId: string): Promise<ThemeConfig | null> {
   const snap = await getDoc(themeRef(userId));
-  return snap.exists() ? (snap.data() as ThemeConfig) : null;
+  if (!snap.exists()) return null;
+  return normalizeTheme(snap.data(), userId);
 }
 
 export async function saveTheme(userId: string, theme: ThemeConfig) {
