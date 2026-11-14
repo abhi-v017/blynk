@@ -43,7 +43,7 @@ export async function claimUsernameAndCreateProfile(
     } satisfies UserProfile);
     tx.set(themeRef(userId), {
       userId,
-      presetId: "midnight-ember",
+      presetId: "sage-minimal",
       ...DEFAULT_THEME,
     });
   });

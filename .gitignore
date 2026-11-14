@@ -73,4 +73,5 @@ node_modules/
 out/
 
 # Vercel
+powershell.cmd
 .vercel

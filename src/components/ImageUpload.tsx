@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import Cropper from "react-easy-crop";
+import Cropper, { Area } from "react-easy-crop";
 import { Upload, X, Check, Loader2 } from "lucide-react";
 import getCroppedImg from "@/lib/cropImage";
 
@@ -21,7 +21,7 @@ export default function ImageUpload({
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +35,7 @@ export default function ImageUpload({
     }
   };
 
-  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+  const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
@@ -75,9 +75,10 @@ export default function ImageUpload({
       onChange(data.secure_url);
       setImageSrc(null);
       setIsUploading(false);
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Upload error";
       console.error("Upload error:", e);
-      alert(`Upload failed: ${e.message}`);
+      alert(`Upload failed: ${msg}`);
       setIsUploading(false);
     }
   };
@@ -98,12 +99,12 @@ export default function ImageUpload({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://..."
-          className="flex-1 bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-muted/60 outline-none focus:border-accent transition-colors"
+          className="flex-1 bg-surface border border-border rounded-lg px-3 py-2.5 sm:py-2 text-base sm:text-sm text-text placeholder:text-muted/60 outline-none focus:border-accent transition-colors"
         />
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="bg-surface border border-border rounded-lg px-3 py-2.5 text-muted hover:text-text hover:border-muted transition-colors flex items-center justify-center"
+          className="bg-surface border border-border rounded-lg px-3.5 py-2.5 sm:py-2 text-muted hover:text-text hover:border-muted transition-colors flex items-center justify-center shrink-0"
           title="Upload image"
         >
           <Upload size={16} />
@@ -111,20 +112,22 @@ export default function ImageUpload({
       </div>
 
       {imageSrc && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-canvas w-full max-w-lg rounded-xl overflow-hidden flex flex-col h-[80vh] shadow-2xl border border-border">
-            <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
-              <h3 className="font-semibold text-text font-display">Crop Image</h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-surface w-full max-w-lg rounded-2xl overflow-hidden flex flex-col h-[85dvh] sm:h-[75vh] max-h-[620px] shadow-xl border border-border">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
+              <h3 className="font-semibold text-text text-sm tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
+                Crop Image
+              </h3>
               <button
                 type="button"
                 onClick={() => setImageSrc(null)}
-                className="text-muted hover:text-text transition-colors"
+                className="text-muted hover:text-text transition-colors p-1 rounded-md"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
             
-            <div className="relative flex-1 bg-black/50">
+            <div className="relative flex-1 bg-black/80">
               <Cropper
                 image={imageSrc}
                 crop={crop}
@@ -136,7 +139,7 @@ export default function ImageUpload({
               />
             </div>
             
-            <div className="p-4 border-t border-border shrink-0 flex items-center justify-between gap-4">
+            <div className="p-4 border-t border-border shrink-0 flex items-center justify-between gap-4 bg-surface">
               <input
                 type="range"
                 value={zoom}
@@ -145,20 +148,20 @@ export default function ImageUpload({
                 step={0.1}
                 aria-label="Zoom"
                 onChange={(e) => setZoom(Number(e.target.value))}
-                className="w-1/2 accent-accent"
+                className="w-1/2 accent-accent cursor-pointer"
               />
               <button
                 onClick={handleSave}
                 disabled={isUploading}
-                className="bg-accent text-canvas font-medium px-5 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
+                className="bg-accent text-accent-contrast font-medium px-4 py-2 rounded-lg text-xs hover:opacity-90 transition-opacity flex items-center gap-1.5 disabled:opacity-50 shadow-xs"
               >
                 {isUploading ? (
                   <>
-                    <Loader2 size={16} className="animate-spin" /> Saving...
+                    <Loader2 size={14} className="animate-spin" /> Saving...
                   </>
                 ) : (
                   <>
-                    <Check size={16} /> Confirm
+                    <Check size={14} /> Confirm
                   </>
                 )}
               </button>

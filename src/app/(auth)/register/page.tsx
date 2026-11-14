@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { claimUsernameAndCreateProfile, isUsernameAvailable } from "@/lib/firestore";
-import { TextInput } from "@/components/ui";
+import { TextInput, ThemeToggle } from "@/components/ui";
 
 export default function RegisterPage() {
   const { signUp } = useAuth();
@@ -45,68 +45,97 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-canvas flex items-center justify-center px-4">
+    <div className="min-h-[100dvh] bg-canvas text-text flex items-center justify-center p-4 py-8 transition-colors">
       <div className="w-full max-w-sm">
-        <Link href="/" className="text-sm text-muted hover:text-text mb-6 inline-block">
-          ← back
-        </Link>
-        <h1 className="text-2xl font-semibold mb-1" style={{ fontFamily: "var(--font-display)" }}>
-          Claim your page
-        </h1>
-        <p className="text-sm text-muted mb-6">Free, and yours in under a minute.</p>
-
-        <form onSubmit={handleSubmit} className="space-y-3.5">
-          <TextInput
-            placeholder="Display name"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            required
-          />
-          <div className="flex items-center bg-surface border border-border rounded-lg overflow-hidden focus-within:border-accent">
-            <span className="pl-3 text-sm text-muted" style={{ fontFamily: "var(--font-label)" }}>
-              bento.page/
-            </span>
-            <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
-              placeholder="yourname"
-              required
-              className="flex-1 bg-transparent py-2.5 pr-3 text-sm outline-none text-text"
-            />
-          </div>
-          <TextInput
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <TextInput
-            type="password"
-            placeholder="Password (min 6 characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            minLength={6}
-            required
-          />
-
-          {error && <p className="text-xs text-accent">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-accent text-canvas font-medium rounded-lg py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {submitting ? "Creating your page…" : "Create my page"}
-          </button>
-        </form>
-
-        <p className="text-xs text-muted mt-5 text-center">
-          Already have a page?{" "}
-          <Link href="/login" className="text-accent">
-            Sign in
+        <div className="flex items-center justify-between mb-5 sm:mb-6">
+          <Link href="/" className="text-xs text-muted hover:text-text transition-colors p-1">
+            ← Home
           </Link>
-        </p>
+          <ThemeToggle />
+        </div>
+
+        <div className="bg-surface border border-border p-5 sm:p-6 rounded-2xl shadow-xs">
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight mb-1 text-text" style={{ fontFamily: "var(--font-display)" }}>
+            Claim your page
+          </h1>
+          <p className="text-xs text-muted mb-4 sm:mb-5">Create a clean, minimal personal micro-website.</p>
+
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div>
+              <label className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-label)" }}>
+                Display Name
+              </label>
+              <TextInput
+                placeholder="Jane Doe"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-label)" }}>
+                Handle / URL
+              </label>
+              <div className="flex items-center bg-surface border border-border rounded-lg overflow-hidden focus-within:border-accent focus-within:ring-1 focus-within:ring-accent/20 transition-all">
+                <span className="pl-3 text-xs text-muted font-mono select-none">
+                  blynk.page/
+                </span>
+                <input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
+                  placeholder="yourname"
+                  required
+                  className="flex-1 bg-transparent py-2.5 sm:py-2 pr-3 text-base sm:text-sm font-mono outline-none text-text placeholder:text-muted/50"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-label)" }}>
+                Email
+              </label>
+              <TextInput
+                type="email"
+                placeholder="name@domain.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-label)" }}>
+                Password (min 6 chars)
+              </label>
+              <TextInput
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+            </div>
+
+            {error && <p className="text-xs text-rose-500 pt-1">{error}</p>}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-accent text-accent-contrast font-medium rounded-lg py-2.5 text-xs hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 shadow-xs active:scale-[0.99]"
+            >
+              {submitting ? "Creating your page…" : "Create my page"}
+            </button>
+          </form>
+
+          <p className="text-xs text-muted mt-5 text-center">
+            Already have an account?{" "}
+            <Link href="/login" className="text-text underline hover:opacity-80 font-medium">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

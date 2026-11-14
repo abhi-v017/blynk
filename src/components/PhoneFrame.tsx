@@ -1,15 +1,20 @@
-export default function PhoneFrame({ children }: { children: React.ReactNode }) {
+export default function PhoneFrame({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="relative mx-auto" style={{ width: 300, height: 610 }}>
-      <div
-        className="absolute inset-0 rounded-[38px] p-2.5"
-        style={{
-          background: "linear-gradient(160deg, #2a2e34, #101215)",
-          boxShadow: "0 20px 60px -20px rgba(0,0,0,0.6), inset 0 0 0 1px #333840",
-        }}
-      >
-        <div className="relative w-full h-full rounded-[28px] overflow-hidden bg-black">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-[#101215] rounded-b-2xl z-20" />
+    <div
+      className={`relative mx-auto select-none w-[280px] xs:w-[305px] sm:w-[315px] md:w-[320px] h-[580px] xs:h-[610px] sm:h-[630px] md:h-[640px] max-w-full max-h-[calc(100dvh-130px)] transition-all ${className}`}
+    >
+      {/* Phone chassis */}
+      <div className="absolute inset-0 rounded-[38px] sm:rounded-[42px] p-2 sm:p-2.5 bg-surface-raised border border-border shadow-md transition-colors">
+        {/* Inner Screen */}
+        <div className="relative w-full h-full rounded-[30px] sm:rounded-[34px] overflow-hidden bg-canvas border border-border/40">
+          {/* Subtle minimal pill / dynamic notch */}
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 sm:w-20 h-3.5 sm:h-4 bg-text/15 rounded-full z-30 pointer-events-none transition-colors" />
           <div className="w-full h-full overflow-hidden">{children}</div>
         </div>
       </div>

@@ -9,20 +9,22 @@ export default function ProfilePage() {
   if (!profile) return null;
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-1" style={{ fontFamily: "var(--font-display)" }}>
-        Profile
-      </h1>
-      <p className="text-sm text-muted mb-6">
-        This is what visitors see first. Keep it human — a name, a line about you, a face.
-      </p>
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-text mb-0.5 sm:mb-1" style={{ fontFamily: "var(--font-display)" }}>
+          Profile Details
+        </h1>
+        <p className="text-xs text-muted leading-relaxed">
+          Set up your public identity: name, brief bio, and avatar.
+        </p>
+      </div>
 
-      <Panel title="Identity">
-        <Field label="Display name">
+      <Panel title="Identity" description="Basic information displayed on your bio page">
+        <Field label="Display name" hint={`${profile.displayName.length}/40`}>
           <TextInput
             value={profile.displayName}
             onChange={(e) => setProfile({ displayName: e.target.value })}
-            placeholder="Abek Sharma"
+            placeholder="Your Name"
             maxLength={40}
           />
         </Field>
@@ -31,12 +33,12 @@ export default function ProfilePage() {
           <TextArea
             value={profile.bio}
             onChange={(e) => setProfile({ bio: e.target.value.slice(0, 160) })}
-            placeholder="Designer building small, honest things on the internet."
+            placeholder="A short sentence about who you are and what you make."
             rows={3}
           />
         </Field>
 
-        <Field label="Profile picture" hint="upload or paste link">
+        <Field label="Profile Avatar" hint="Upload image or paste direct image URL">
           <ImageUpload
             value={profile.profilePic}
             onChange={(v) => setProfile({ profilePic: v })}
@@ -46,13 +48,15 @@ export default function ProfilePage() {
         </Field>
       </Panel>
 
-      <Panel title="Your address">
-        <div className="text-sm text-muted">
-          Your page lives at{" "}
-          <span className="text-accent" style={{ fontFamily: "var(--font-label)" }}>
-            bento.page/{profile.username}
-          </span>
-          . Usernames can&apos;t be changed yet — reach out if you need a swap.
+      <Panel title="Claimed Address">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-muted">
+          <div className="truncate">
+            Your page is live at{" "}
+            <span className="font-mono text-text font-medium bg-surface-raised px-1.5 py-0.5 rounded border border-border">
+              blynk.page/{profile.username}
+            </span>
+          </div>
+          <span className="text-[11px] text-muted/70 shrink-0">Unique ID</span>
         </div>
       </Panel>
     </div>

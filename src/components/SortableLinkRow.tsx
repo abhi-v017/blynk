@@ -24,58 +24,62 @@ export default function SortableLinkRow({
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.35 : 1,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-surface border border-border rounded-xl p-3 mb-2.5 flex items-start gap-2.5"
+      className={`bg-surface border rounded-xl p-3 sm:p-3.5 mb-2.5 flex items-start gap-2.5 sm:gap-3 transition-colors ${
+        link.isActive ? "border-border shadow-xs" : "border-border/60 opacity-60 bg-surface-raised/40"
+      }`}
     >
+      {/* Touch-friendly Drag Handle */}
       <button
         type="button"
         {...attributes}
         {...listeners}
-        className="mt-2.5 text-muted hover:text-text cursor-grab active:cursor-grabbing touch-none"
+        className="mt-1.5 sm:mt-2 text-muted hover:text-text cursor-grab active:cursor-grabbing touch-none p-1.5 sm:p-1 rounded transition-colors shrink-0"
         aria-label="Drag to reorder"
       >
         <GripVertical size={16} />
       </button>
 
-      <div className="flex-1 min-w-0 flex gap-2">
+      <div className="flex-1 min-w-0 flex flex-col xs:flex-row gap-2">
         {showIconInput && (
-          <div className="w-14 shrink-0">
+          <div className="w-full xs:w-12 shrink-0">
             <TextInput
               value={link.icon || ""}
               onChange={(e) => onChange({ icon: e.target.value })}
-              placeholder="Icon"
-              className="text-center h-19"
+              placeholder="✨"
+              className="text-center h-10 xs:h-9 text-base"
               maxLength={2}
             />
           </div>
         )}
-        <div className="flex-1">
+        <div className="flex-1 space-y-1.5 min-w-0">
           <TextInput
             value={link.title}
             onChange={(e) => onChange({ title: e.target.value })}
-            placeholder="Link title"
-            className="mb-2"
+            placeholder="Link title (e.g. My Portfolio)"
           />
           <TextInput
             value={link.url}
             onChange={(e) => onChange({ url: e.target.value })}
-            placeholder="https://…"
+            placeholder="https://example.com"
+            className="font-mono text-xs text-muted"
           />
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-3 mt-1.5 shrink-0">
+      <div className="flex flex-col items-center gap-2 mt-0.5 sm:mt-1 shrink-0">
         <Toggle checked={link.isActive} onChange={(v) => onChange({ isActive: v })} />
         <button
           type="button"
           onClick={onDelete}
-          className="text-muted hover:text-accent transition-colors"
+          className="text-muted hover:text-rose-500 p-1.5 sm:p-1 rounded transition-colors"
+          title="Delete link"
           aria-label="Delete link"
         >
           <Trash2 size={15} />

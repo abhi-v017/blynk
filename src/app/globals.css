@@ -1,65 +1,129 @@
 @import "tailwindcss";
 
 :root {
-  --canvas: #0b0d10;
-  --surface: #14171b;
-  --surface-raised: #1a1e23;
-  --border: #23272d;
-  --text: #f5f3ef;
-  --muted: #9a9fa8;
-  --accent: #ff5a36;
-  --accent-soft: #ff5a3622;
+  /* Light Mode (Clean, Minimal, Pastel-Contrast) */
+  --canvas: #f8f9fa;
+  --surface: #ffffff;
+  --surface-raised: #f1f3f5;
+  --surface-hover: #f8f9fa;
+  --border: #e2e8f0;
+  --border-subtle: #edf2f7;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #1e293b;
+  --accent-contrast: #ffffff;
+  --accent-soft: #f1f5f9;
+  --mint: #16a34a;
+  --warning: #d97706;
+
+  /* Pastel Palette Tokens */
+  --pastel-sage: #e8efe9;
+  --pastel-oat: #f6f3ec;
+  --pastel-lavender: #efebf6;
+  --pastel-sky: #eaf0f6;
+  --pastel-rose: #f8ecee;
+  --pastel-charcoal: #242220;
+}
+
+.dark {
+  /* Dark Mode (Matte, Minimal, Low-glare, Organized) */
+  --canvas: #0f1216;
+  --surface: #171a1f;
+  --surface-raised: #1f2329;
+  --surface-hover: #262b32;
+  --border: #292e37;
+  --border-subtle: #20242b;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --accent: #f8fafc;
+  --accent-contrast: #0f172a;
+  --accent-soft: #1e242d;
   --mint: #4ade80;
+  --warning: #fbbf24;
 }
 
 @theme inline {
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
+  --color-surface-hover: var(--surface-hover);
   --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
   --color-text: var(--text);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
   --color-accent-soft: var(--accent-soft);
   --color-mint: var(--mint);
+  --color-warning: var(--warning);
+
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-label: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html, body {
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
   background: var(--canvas);
   color: var(--text);
   font-family: var(--font-body);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
 }
 
 ::selection {
   background: var(--accent);
-  color: var(--canvas);
+  color: var(--accent-contrast);
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 8px;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }
 
+/* Touch-optimized range sliders for Android & Tablet */
+input[type="range"] {
+  height: 28px;
+  background: transparent;
+}
+input[type="range"]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Subtle, gentle animations - no neon or harsh bounce */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes riseIn {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes popIn {
-  0% { opacity: 0; transform: scale(0.85); }
-  70% { transform: scale(1.03); }
+  0% { opacity: 0; transform: scale(0.96); }
   100% { opacity: 1; transform: scale(1); }
 }

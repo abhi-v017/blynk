@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { TextInput } from "@/components/ui";
+import { TextInput, ThemeToggle } from "@/components/ui";
 
 export default function LoginPage() {
   const { signIn } = useAuth();
@@ -22,55 +22,72 @@ export default function LoginPage() {
       await signIn(email, password);
       router.push("/dashboard/profile");
     } catch {
-      setError("Couldn't sign in. Check your email and password.");
+      setError("Couldn't sign in. Please verify your email and password.");
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-canvas flex items-center justify-center px-4">
+    <div className="min-h-[100dvh] bg-canvas text-text flex items-center justify-center p-4 py-8 transition-colors">
       <div className="w-full max-w-sm">
-        <Link href="/" className="text-sm text-muted hover:text-text mb-6 inline-block">
-          ← back
-        </Link>
-        <h1 className="text-2xl font-semibold mb-1" style={{ fontFamily: "var(--font-display)" }}>
-          Welcome back
-        </h1>
-        <p className="text-sm text-muted mb-6">Sign in to keep shaping your page.</p>
-
-        <form onSubmit={handleSubmit} className="space-y-3.5">
-          <TextInput
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <TextInput
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          {error && <p className="text-xs text-accent">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-accent text-canvas font-medium rounded-lg py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {submitting ? "Signing in…" : "Sign in"}
-          </button>
-        </form>
-
-        <p className="text-xs text-muted mt-5 text-center">
-          New here?{" "}
-          <Link href="/register" className="text-accent">
-            Create a page
+        <div className="flex items-center justify-between mb-5 sm:mb-6">
+          <Link href="/" className="text-xs text-muted hover:text-text transition-colors p-1">
+            ← Home
           </Link>
-        </p>
+          <ThemeToggle />
+        </div>
+
+        <div className="bg-surface border border-border p-5 sm:p-6 rounded-2xl shadow-xs">
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight mb-1 text-text" style={{ fontFamily: "var(--font-display)" }}>
+            Welcome back
+          </h1>
+          <p className="text-xs text-muted mb-4 sm:mb-5">Sign in to edit and manage your bio page.</p>
+
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div>
+              <label className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-label)" }}>
+                Email
+              </label>
+              <TextInput
+                type="email"
+                placeholder="name@domain.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-label)" }}>
+                Password
+              </label>
+              <TextInput
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            {error && <p className="text-xs text-rose-500 pt-1">{error}</p>}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-accent text-accent-contrast font-medium rounded-lg py-2.5 text-xs hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 shadow-xs active:scale-[0.99]"
+            >
+              {submitting ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+
+          <p className="text-xs text-muted mt-5 text-center">
+            Don&apos;t have a page yet?{" "}
+            <Link href="/register" className="text-text underline hover:opacity-80 font-medium">
+              Claim yours
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/lib/editor-store";
-import { Field, TextInput, ColorInput, SegmentedControl, Panel } from "@/components/ui";
+import { Field, ColorInput, SegmentedControl, Panel } from "@/components/ui";
 import ImageUpload from "@/components/ImageUpload";
 import { THEME_PRESETS } from "@/lib/presets";
 import { FONT_OPTIONS } from "@/lib/fonts";
@@ -25,6 +25,7 @@ import {
   EyeOff,
   Wand2,
   Smile,
+  Check,
 } from "lucide-react";
 
 function FontSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
@@ -32,7 +33,7 @@ function FontSelect({ value, onChange }: { value: string; onChange: (v: string) 
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-text outline-none focus:border-accent"
+      className="w-full bg-surface border border-border rounded-lg px-3 py-2.5 sm:py-2 text-base sm:text-sm text-text outline-none focus:border-accent focus:ring-1 focus:ring-accent/20 transition-all cursor-pointer"
     >
       {FONT_OPTIONS.map((f) => (
         <option key={f.value} value={f.value}>
@@ -48,79 +49,113 @@ export default function ThemePage() {
   if (!theme) return null;
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-1" style={{ fontFamily: "var(--font-display)" }}>
-        Theme
-      </h1>
-      <p className="text-sm text-muted mb-6">
-        Start from a preset, then push it wherever you want. Every change shows up live on the right.
-      </p>
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-text mb-0.5 sm:mb-1" style={{ fontFamily: "var(--font-display)" }}>
+          Theme & Appearance
+        </h1>
+        <p className="text-xs text-muted">
+          Pick a minimal pastel preset or customize individual colors, typography, buttons, and layout.
+        </p>
+      </div>
 
-      <Panel title="Presets">
-        <div className="grid grid-cols-2 gap-2.5">
-          {THEME_PRESETS.map((preset) => (
-            <button
-              key={preset.id}
-              type="button"
-              onClick={() =>
-                setTheme({ ...preset.theme, userId: theme.userId, presetId: preset.id } as ThemeConfig)
-              }
-              className={`text-left rounded-lg border p-3 transition-colors ${
-                theme.presetId === preset.id ? "border-accent" : "border-border hover:border-muted"
-              }`}
-              style={{
-                background:
-                  preset.theme.background.type === "gradient"
-                    ? `linear-gradient(135deg, ${preset.theme.background.color}, ${preset.theme.background.color2})`
-                    : preset.theme.background.color,
-              }}
-            >
-              <div
-                className="text-xs font-semibold mb-0.5"
-                style={{ color: preset.theme.font.color, fontFamily: "var(--font-display)" }}
+      {/* Presets Gallery */}
+      <Panel
+        title="Minimal Presets"
+        description="Curated single-color and soft pastel starting directions"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {THEME_PRESETS.map((preset) => {
+            const isSelected = theme.presetId === preset.id;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() =>
+                  setTheme({ ...preset.theme, userId: theme.userId, presetId: preset.id } as ThemeConfig)
+                }
+                className={`text-left rounded-xl border p-3.5 transition-all relative overflow-hidden flex flex-col justify-between h-24 active:scale-[0.99] ${
+                  isSelected
+                    ? "border-accent ring-1 ring-accent/30 shadow-xs"
+                    : "border-border hover:border-muted/60 opacity-90 hover:opacity-100"
+                }`}
+                style={{
+                  background:
+                    preset.theme.background.type === "gradient"
+                      ? `linear-gradient(135deg, ${preset.theme.background.color}, ${preset.theme.background.color2})`
+                      : preset.theme.background.color,
+                }}
               >
-                {preset.name}
-              </div>
-              <div className="text-[10.5px] leading-snug" style={{ color: preset.theme.font.mutedColor }}>
-                {preset.description}
-              </div>
-            </button>
-          ))}
+                <div className="flex items-start justify-between w-full">
+                  <span
+                    className="text-xs font-semibold"
+                    style={{ color: preset.theme.font.color, fontFamily: "var(--font-display)" }}
+                  >
+                    {preset.name}
+                  </span>
+                  {isSelected && (
+                    <span
+                      className="p-1 rounded-full text-[10px]"
+                      style={{
+                        backgroundColor: preset.theme.button.bgColor,
+                        color: preset.theme.button.textColor,
+                      }}
+                    >
+                      <Check size={11} strokeWidth={2.5} />
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="text-[11px] leading-tight line-clamp-2"
+                  style={{ color: preset.theme.font.mutedColor }}
+                >
+                  {preset.description}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </Panel>
 
-      <Panel title="Background">
-        <Field label="Type">
+      {/* Background Options */}
+      <Panel title="Canvas & Background" description="Single color, subtle gradient, or image backdrop">
+        <Field label="Background Style">
           <SegmentedControl
             value={theme.background.type}
             onChange={(v) => setThemeDeep("background", { type: v })}
             options={[
-              { label: "Color", value: "color", icon: <Palette size={16} /> },
-              { label: "Gradient", value: "gradient", icon: <Droplets size={16} /> },
-              { label: "Image", value: "image", icon: <ImageIcon size={16} /> },
+              { label: "Single Color", value: "color", icon: <Palette size={14} /> },
+              { label: "Subtle Gradient", value: "gradient", icon: <Droplets size={14} /> },
+              { label: "Image", value: "image", icon: <ImageIcon size={14} /> },
             ]}
           />
         </Field>
 
         {theme.background.type !== "image" && (
-          <Field label={theme.background.type === "gradient" ? "Color 1" : "Color"}>
-            <ColorInput value={theme.background.color} onChange={(v) => setThemeDeep("background", { color: v })} />
+          <Field label={theme.background.type === "gradient" ? "Primary Color" : "Background Color"}>
+            <ColorInput
+              value={theme.background.color}
+              onChange={(v) => setThemeDeep("background", { color: v })}
+            />
           </Field>
         )}
 
         {theme.background.type === "gradient" && (
           <>
-            <Field label="Color 2">
-              <ColorInput value={theme.background.color2} onChange={(v) => setThemeDeep("background", { color2: v })} />
+            <Field label="Secondary Color">
+              <ColorInput
+                value={theme.background.color2}
+                onChange={(v) => setThemeDeep("background", { color2: v })}
+              />
             </Field>
-            <Field label="Angle" hint={`${theme.background.gradientAngle}°`}>
+            <Field label="Gradient Angle" hint={`${theme.background.gradientAngle}°`}>
               <input
                 type="range"
                 min={0}
                 max={360}
                 value={theme.background.gradientAngle}
                 onChange={(e) => setThemeDeep("background", { gradientAngle: Number(e.target.value) })}
-                className="w-full accent-accent"
+                className="w-full accent-accent cursor-pointer py-1"
               />
             </Field>
           </>
@@ -128,7 +163,7 @@ export default function ThemePage() {
 
         {theme.background.type === "image" && (
           <>
-            <Field label="Background image">
+            <Field label="Backdrop Image">
               <ImageUpload
                 value={theme.background.imageUrl}
                 onChange={(v) => setThemeDeep("background", { imageUrl: v })}
@@ -136,130 +171,161 @@ export default function ThemePage() {
                 folder="themes"
               />
             </Field>
-            <Field label="Dark overlay" hint={`${Math.round(theme.background.overlay * 100)}%`}>
+            <Field label="Dark Dimmer Overlay" hint={`${Math.round(theme.background.overlay * 100)}%`}>
               <input
                 type="range"
                 min={0}
                 max={90}
                 value={theme.background.overlay * 100}
                 onChange={(e) => setThemeDeep("background", { overlay: Number(e.target.value) / 100 })}
-                className="w-full accent-accent"
+                className="w-full accent-accent cursor-pointer py-1"
               />
             </Field>
           </>
         )}
       </Panel>
 
-      <Panel title="Typography">
-        <Field label="Display font (name)">
-          <FontSelect value={theme.font.family} onChange={(v) => setThemeDeep("font", { family: v })} />
+      {/* Typography Options */}
+      <Panel title="Typography" description="Paired Google fonts and text sizing">
+        <Field label="Display Font (Name)">
+          <FontSelect
+            value={theme.font.family}
+            onChange={(v) => setThemeDeep("font", { family: v })}
+          />
         </Field>
-        <Field label="Body font (bio & links)">
-          <FontSelect value={theme.font.bodyFamily} onChange={(v) => setThemeDeep("font", { bodyFamily: v })} />
+        <Field label="Body Font (Bio & Links)">
+          <FontSelect
+            value={theme.font.bodyFamily}
+            onChange={(v) => setThemeDeep("font", { bodyFamily: v })}
+          />
         </Field>
-        <Field label="Text color">
-          <ColorInput value={theme.font.color} onChange={(v) => setThemeDeep("font", { color: v })} />
-        </Field>
-        <Field label="Muted text color">
-          <ColorInput value={theme.font.mutedColor} onChange={(v) => setThemeDeep("font", { mutedColor: v })} />
-        </Field>
-        <Field label="Size">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <Field label="Heading Color">
+            <ColorInput
+              value={theme.font.color}
+              onChange={(v) => setThemeDeep("font", { color: v })}
+            />
+          </Field>
+          <Field label="Muted Color">
+            <ColorInput
+              value={theme.font.mutedColor}
+              onChange={(v) => setThemeDeep("font", { mutedColor: v })}
+            />
+          </Field>
+        </div>
+        <Field label="Scale Size">
           <SegmentedControl
             value={theme.font.size}
             onChange={(v) => setThemeDeep("font", { size: v })}
             options={[
-              { label: "Small", value: "sm" },
-              { label: "Medium", value: "md" },
+              { label: "Compact", value: "sm" },
+              { label: "Regular", value: "md" },
               { label: "Large", value: "lg" },
             ]}
           />
         </Field>
       </Panel>
 
-      <Panel title="Buttons">
-        <Field label="Shape">
+      {/* Buttons */}
+      <Panel title="Buttons & Links" description="Corner rounding, outline or fill, and contrast colors">
+        <Field label="Corner Shape">
           <SegmentedControl
             value={theme.button.shape}
             onChange={(v) => setThemeDeep("button", { shape: v })}
             options={[
-              { label: "Sharp", value: "sharp", icon: <Square size={16} /> },
-              { label: "Soft", value: "soft", icon: <AppWindow size={16} /> },
-              { label: "Pill", value: "pill", icon: <Circle size={16} /> },
+              { label: "Sharp", value: "sharp", icon: <Square size={14} /> },
+              { label: "Soft", value: "soft", icon: <AppWindow size={14} /> },
+              { label: "Pill", value: "pill", icon: <Circle size={14} /> },
             ]}
           />
         </Field>
-        <Field label="Fill">
+
+        <Field label="Button Fill">
           <SegmentedControl
             value={theme.button.fill}
             onChange={(v) => setThemeDeep("button", { fill: v })}
             options={[
-              { label: "Solid", value: "solid", icon: <PaintBucket size={16} /> },
-              { label: "Outline", value: "outline", icon: <Layout size={16} /> },
-              { label: "Glass", value: "glass", icon: <AppWindow size={16} /> },
+              { label: "Solid", value: "solid", icon: <PaintBucket size={14} /> },
+              { label: "Outline", value: "outline", icon: <Layout size={14} /> },
+              { label: "Frosted Glass", value: "glass", icon: <AppWindow size={14} /> },
             ]}
           />
         </Field>
-        <Field label="Background / border color">
-          <ColorInput value={theme.button.bgColor} onChange={(v) => setThemeDeep("button", { bgColor: v, borderColor: v })} />
-        </Field>
-        <Field label="Text color">
-          <ColorInput value={theme.button.textColor} onChange={(v) => setThemeDeep("button", { textColor: v })} />
-        </Field>
-        <Field label="Spacing">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <Field label="Button Background / Border">
+            <ColorInput
+              value={theme.button.bgColor}
+              onChange={(v) => setThemeDeep("button", { bgColor: v, borderColor: v })}
+            />
+          </Field>
+          <Field label="Button Text Color">
+            <ColorInput
+              value={theme.button.textColor}
+              onChange={(v) => setThemeDeep("button", { textColor: v })}
+            />
+          </Field>
+        </div>
+
+        <Field label="Vertical Spacing">
           <SegmentedControl
             value={theme.button.spacing}
             onChange={(v) => setThemeDeep("button", { spacing: v })}
             options={[
-              { label: "Compact", value: "compact" },
+              { label: "Tight", value: "compact" },
               { label: "Normal", value: "normal" },
               { label: "Roomy", value: "roomy" },
             ]}
           />
         </Field>
-        <Field label="Icons">
+
+        <Field label="Link Badges / Icons">
           <SegmentedControl
             value={theme.button.iconStyle || "none"}
             onChange={(v) => setThemeDeep("button", { iconStyle: v })}
             options={[
-              { label: "None", value: "none", icon: <EyeOff size={16} /> },
-              { label: "Auto", value: "auto", icon: <Wand2 size={16} /> },
-              { label: "Custom", value: "custom", icon: <Smile size={16} /> },
+              { label: "None", value: "none", icon: <EyeOff size={14} /> },
+              { label: "Auto Favicon", value: "auto", icon: <Wand2 size={14} /> },
+              { label: "Custom Emoji", value: "custom", icon: <Smile size={14} /> },
             ]}
           />
         </Field>
       </Panel>
 
-      <Panel title="Layout & motion">
-        <Field label="Layout">
+      {/* Layout & Motion */}
+      <Panel title="Layout & Motion" description="Grid format and subtle entry animations">
+        <Field label="Link Arrangement">
           <SegmentedControl
             value={theme.layout}
             onChange={(v) => setTheme({ layout: v })}
             options={[
-              { label: "Stack", value: "stack", icon: <AlignJustify size={16} /> },
-              { label: "Grid", value: "grid", icon: <Grid size={16} /> },
+              { label: "Vertical Stack", value: "stack", icon: <AlignJustify size={14} /> },
+              { label: "2-Column Grid", value: "grid", icon: <Grid size={14} /> },
             ]}
           />
         </Field>
-        <Field label="Animation">
+
+        <Field label="Entry Animation">
           <SegmentedControl
             value={theme.animation}
             onChange={(v) => setTheme({ animation: v })}
             options={[
-              { label: "None", value: "none", icon: <Minus size={16} /> },
-              { label: "Fade", value: "fade", icon: <Wind size={16} /> },
-              { label: "Rise", value: "rise", icon: <ArrowUp size={16} /> },
-              { label: "Pop", value: "pop", icon: <Sparkles size={16} /> },
+              { label: "None", value: "none", icon: <Minus size={14} /> },
+              { label: "Soft Fade", value: "fade", icon: <Wind size={14} /> },
+              { label: "Rise", value: "rise", icon: <ArrowUp size={14} /> },
+              { label: "Pop", value: "pop", icon: <Sparkles size={14} /> },
             ]}
           />
         </Field>
-        <Field label="Avatar shape">
+
+        <Field label="Avatar Shape">
           <SegmentedControl
             value={theme.avatarShape}
             onChange={(v) => setTheme({ avatarShape: v })}
             options={[
-              { label: "Circle", value: "circle", icon: <Circle size={16} /> },
-              { label: "Square", value: "square", icon: <Square size={16} /> },
-              { label: "Squircle", value: "squircle", icon: <Hexagon size={16} /> },
+              { label: "Circle", value: "circle", icon: <Circle size={14} /> },
+              { label: "Soft Square", value: "square", icon: <Square size={14} /> },
+              { label: "Squircle", value: "squircle", icon: <Hexagon size={14} /> },
             ]}
           />
         </Field>
