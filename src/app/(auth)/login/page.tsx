@@ -27,6 +27,20 @@ export default function LoginPage() {
     }
   }
 
+  async function handleQuickDemo() {
+    setEmail("demo@blynk.app");
+    setPassword("Password123!");
+    setError("");
+    setSubmitting(true);
+    try {
+      await signIn("demo@blynk.app", "Password123!");
+      router.push("/dashboard/profile");
+    } catch {
+      setError("Couldn't sign in to demo account.");
+      setSubmitting(false);
+    }
+  }
+
   return (
     <div className="min-h-[100dvh] bg-canvas text-text flex items-center justify-center p-4 py-8 transition-colors">
       <div className="w-full max-w-sm">
@@ -80,6 +94,24 @@ export default function LoginPage() {
               {submitting ? "Signing in…" : "Sign in"}
             </button>
           </form>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-[10px] uppercase font-mono tracking-wider">
+              <span className="bg-surface px-2 text-muted">Recruiter preview</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleQuickDemo}
+            disabled={submitting}
+            className="w-full bg-surface hover:bg-canvas border border-border text-text font-medium rounded-lg py-2 text-xs transition-colors shadow-2xs flex items-center justify-center gap-1.5 active:scale-[0.99]"
+          >
+            <span>⚡ 1-Click Recruiter Demo Login</span>
+          </button>
 
           <p className="text-xs text-muted mt-5 text-center">
             Don&apos;t have a page yet?{" "}
